@@ -1,0 +1,37 @@
+{
+  "node_id": "edge-node-01",
+  "ollama": {
+    "base_url": "http://localhost:11434",
+    "model": "llama3"
+  },
+  "camera": {
+    "device_id": 0,
+    "width": 1280,
+    "height": 720,
+    "fps": 30
+  },
+  "yolo": {
+    "model": "yolov8n.pt",
+    "conf_threshold": 0.5,
+    "device": "cuda"
+  },
+  "mqtt": {
+    "broker": "localhost",
+    "port": 1883,
+    "topic_prefix": "edge/node01"
+  },
+  "zmq": {
+    "push_address": "tcp://localhost:5555"
+  },
+  "api": {
+    "host": "0.0.0.0",
+    "port": 8000
+  },
+  "db": {
+    "path": "edge_node.db"
+  },
+  "telemetry": {
+    "prometheus_port": 9090,
+    "otlp_endpoint": "http://localhost:4317"
+  }
+}
