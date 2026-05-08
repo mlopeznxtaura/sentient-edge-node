@@ -1,26 +1,14 @@
-# Sentient Edge Node — Cluster 01
-# Core
-fastapi>=0.111.0
-uvicorn[standard]>=0.29.0
-pydantic>=2.7.0
-sqlalchemy>=2.0.0
-# Perception
-opencv-python>=4.9.0
 ultralytics>=8.2.0
-mediapipe>=0.10.0
-open3d>=0.18.0
-# Audio
-pyaudio>=0.2.14
-# LLM / Agent
-langchain>=0.2.0
+torch>=2.3.0
+opencv-python>=4.9.0
 langgraph>=0.1.0
-# Messaging
+langchain>=0.2.0
+langchain-community>=0.2.0
 paho-mqtt>=2.0.0
-pyzmq>=26.0.0
-# Telemetry
 prometheus-client>=0.20.0
 opentelemetry-sdk>=1.24.0
 opentelemetry-exporter-otlp>=1.24.0
-# GPU (optional)
-# nvidia-warp-agent  # pip install warp-lang
-# nvidia-dali  # install separately per platform
+pydantic>=2.7.0
+fastapi>=0.111.0
+uvicorn>=0.29.0
+pyzmq>=25.1.0
