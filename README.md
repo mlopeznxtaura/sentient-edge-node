@@ -1,64 +1,73 @@
-# Cluster 01 — Sentient Edge Node
+# Sentient Edge Node
 
-> Local AI agents that perceive, decide, and act without cloud dependency
+Local AI agents that perceive, decide, and act without cloud dependency.
+
+**Cluster 01 of 25 — NextAura 500 SDKs / 25 Clusters**
+
+## What This Is
+
+An edge node that runs entirely on local hardware. No API keys. No cloud latency. No data leaving the machine.
+
+The core is a perception-decision-action loop:
+- Camera frames feed into YOLO for object detection and tracking
+- A local LLM (via Ollama/LangGraph) reasons over detections and decides what to do
+- Actions publish out over MQTT to physical systems or downstream consumers
+- Prometheus exposes metrics for the whole loop
 
 ## Architecture
 
 ```
-Camera/Mic → perception/ → agent/loop.py → actuator/
-                                ↓
-                          store/db.py
-                                ↓
-                         telemetry/metrics.py
-                                ↓
-                          api/server.py
+Camera → VisionPipeline (YOLO) → AgentBrain (LangGraph + Ollama) → MQTTPublisher → Actuators
+                                                                  ↓
+                                                           Prometheus /metrics
 ```
 
-## 20 SDKs in this cluster
+## 20 SDKs in This Cluster
 
-| SDK | Role |
-|---|---|
-| Ollama | Local LLM inference (llama3/mistral/phi) |
-| llama.cpp | GGUF model loading fallback |
-| LangGraph | Agent decision graph (stateful loops) |
-| NVIDIA Warp | GPU-accelerated physics / simulation |
-| OpenCV | Camera capture and image processing |
-| YOLO (Ultralytics) | Real-time object detection |
-| FastAPI | REST API for node control + event stream |
-| SQLAlchemy | Local SQLite event store |
-| Pydantic AI | Structured LLM output validation |
-| DALI | GPU-accelerated data loading pipeline |
-| MediaPipe | Hand/face/pose tracking |
-| Mosquitto MQTT | Actuator output (IoT messaging) |
-| TensorFlow Lite | Lightweight on-device inference |
-| Open3D | Point cloud / 3D perception |
-| Prometheus Client | Metrics export |
-| PortAudio | Microphone capture |
-| Depth Pro (Apple) | Monocular depth estimation |
-| ZeroMQ | High-speed inter-process messaging |
-| SAM2 | Zero-shot image segmentation |
-| OpenTelemetry | Distributed tracing |
+Ollama · llama.cpp · LangGraph · NVIDIA Warp · OpenCV · YOLO (Ultralytics) · FastAPI · SQLAlchemy · Pydantic AI · DALI · MediaPipe · Mosquitto MQTT · TensorFlow Lite · Open3D · Prometheus Client · PortAudio · Depth Pro · ZeroMQ · SAM2 · OpenTelemetry
 
-## Build order
-
-1. `perception/vision.py` — YOLO on camera frames, structured JSON output
-2. `perception/audio.py` — PortAudio mic capture, VAD, raw audio buffer
-3. `perception/depth.py` — Depth Pro monocular depth from frame
-4. `store/db.py` — SQLAlchemy event store
-5. `agent/memory.py` — Short + long term memory backed by SQLite
-6. `agent/planner.py` — LangGraph decision graph
-7. `agent/loop.py` — Main perception-decision-action loop
-8. `actuator/mqtt_out.py` — MQTT publisher for actuator commands
-9. `actuator/zmq_out.py` — ZeroMQ PUSH socket for high-speed output
-10. `api/routes.py` — FastAPI routes (status, events, override)
-11. `api/server.py` — FastAPI app wiring
-12. `telemetry/metrics.py` — Prometheus counters/gauges
-13. `telemetry/tracing.py` — OpenTelemetry spans
-
-## Quickstart
+## Getting Started
 
 ```bash
+# 1. Install dependencies
 pip install -r requirements.txt
-# Start Ollama first: ollama serve
-python -m clusters.01_sentient_edge_node.agent.loop --config config.json
+
+# 2. Pull a local LLM via Ollama
+ollama pull llama3
+
+# 3. Start Mosquitto (MQTT broker)
+mosquitto -d
+
+# 4. Run the edge node
+python main.py --source 0 --llm-model llama3
+
+# Metrics available at:
+# http://localhost:8000/metrics
 ```
+
+## File Structure
+
+```
+sentient-edge-node/
+├── perception/
+│   └── vision.py          # YOLO detection + tracking pipeline
+├── agent/
+│   └── brain.py           # LangGraph decision agent (Ollama LLM)
+├── actuator/
+│   └── mqtt_publisher.py  # MQTT action dispatcher
+├── monitoring/
+│   └── metrics.py         # Prometheus metrics
+├── main.py                # Entry point — wires it all together
+└── requirements.txt
+```
+
+## Running in Docker
+
+```bash
+docker build -t sentient-edge-node .
+docker run --gpus all --device /dev/video0 -p 8000:8000 sentient-edge-node
+```
+
+## Part of NextAura
+
+github.com/mlopeznxtaura
